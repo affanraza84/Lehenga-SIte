@@ -180,6 +180,7 @@ export default function ProductsPage() {
           overflow: hidden;
         }
       `}</style>
+      <Footer/>
     </main>
   );
 }

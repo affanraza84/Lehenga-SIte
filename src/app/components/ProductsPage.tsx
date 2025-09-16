@@ -1,12 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import {
-  FaStar,
-  FaChevronDown,
-  FaChevronUp,
-  FaHeart,
-} from "react-icons/fa";
+import { FaStar, FaChevronDown, FaChevronUp, FaHeart } from "react-icons/fa";
 import Image from "next/image";
 import { useCart } from "@/app/context/CartContext";
 import products from "../data/productsDetails";
@@ -56,7 +51,13 @@ const FloatingElements = () => {
   );
 };
 
-const ProductRow = ({ product, index }: { product: Product; index: number }) => {
+const ProductRow = ({
+  product,
+  index,
+}: {
+  product: Product;
+  index: number;
+}) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isLoaded, setIsLoaded] = useState(false);
   const { addToCart } = useCart();
@@ -120,7 +121,7 @@ const ProductRow = ({ product, index }: { product: Product; index: number }) => 
                     id: product.id,
                     title: product.title,
                     price: product.price,
-                    image: product.images[0], // ✅ ensures CartItem compatibility
+                    image: product.images[0],
                   })
                 }
                 className="w-full py-3 bg-gradient-to-r from-[#8B4513] to-[#D2691E] text-white font-semibold rounded-xl hover:from-[#D2691E] hover:to-[#8B4513] transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl cursor-pointer"
@@ -222,7 +223,6 @@ const ProductRow = ({ product, index }: { product: Product; index: number }) => 
 };
 
 export default function ProductsPage() {
-  const [isLoaded, setIsLoaded] = useState(false);
   const { wishlistCount, isLoaded: wishlistLoaded } = useWishlist();
 
   const [filters, setFilters] = useState<{
@@ -236,10 +236,6 @@ export default function ProductsPage() {
     fabric: "",
     color: "",
   });
-
-  useEffect(() => {
-    setIsLoaded(true);
-  }, []);
 
   const filteredProducts = products.filter((product: Product) => {
     const matchesSize = filters.size ? product.size === filters.size : true;
@@ -446,7 +442,6 @@ export default function ProductsPage() {
           )}
         </div>
       </div>
-
       <style jsx>{`
         @keyframes slideUp {
           from {
