@@ -5,8 +5,7 @@ import Link from "next/link";
 import {
   FaFacebookF,
   FaInstagram,
-  FaTwitter,
-  FaPinterest,
+  FaYoutube
 } from "react-icons/fa";
 
 const lehengaCategories = [
@@ -90,11 +89,11 @@ export default function Footer() {
           <ul className="space-y-2">
             <li>
               <a href="mailto:care@vedantfashions.com" className="hover:text-[#E5973D] transition">
-                care@vedantfashions.com
+                fittaraofficial@gmail.com
               </a>
             </li>
-            <li>1800-120-000-500 (India)</li>
-            <li>+91 9674373838 (International)</li>
+            {/* <li>1800-120-000-500 (India)</li> */}
+            <li>+91 70467 89748</li>
             <li>10 am - 7 pm, Monday - Saturday</li>
           </ul>
         </div>
@@ -107,17 +106,16 @@ export default function Footer() {
           <div className="flex items-center gap-4">
             <span className="font-semibold text-white">KEEP IN TOUCH</span>
             <div className="flex space-x-4 text-[#E5973D] text-lg">
-              <Link href="#"><FaFacebookF /></Link>
-              <Link href="#"><FaTwitter /></Link>
-              <Link href="#"><FaInstagram /></Link>
-              <Link href="#"><FaPinterest /></Link>
+              <Link href="https://www.facebook.com/share/1BZn1bHdS9/"><FaFacebookF /></Link>
+              <Link href="https://www.instagram.com/fittara.shop?utm_source=qr&igsh=MWtuMjFiaXhuZGJiNg%3D%3D"><FaInstagram /></Link>
+              <Link href="https://youtube.com/@fittaraofficial?si=vVwYX7w_gjhXUyje"><FaYoutube/></Link>
             </div>
           </div>
         </div>
 
         {/* Copyright */}
         <div className="text-center text-gray-400 mt-4 text-xs">
-          © 2025 Vedant Fashions Ltd. All rights reserved.
+          © 2025 Fittara Fashions Ltd. All rights reserved.
         </div>
       </div>
     </footer>
