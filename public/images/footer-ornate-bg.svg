@@ -1,0 +1,47 @@
+<!-- public/images/footer-ornate-bg.svg -->
+<svg width="100%" height="100%" viewBox="0 0 1440 600" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet">
+  <defs>
+    <!-- Gradient Background -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#421C05" />
+      <stop offset="100%" stop-color="#2C1810" />
+    </linearGradient>
+
+    <!-- Golden Mandala Pattern -->
+    <pattern id="mandalaPattern" patternUnits="userSpaceOnUse" width="300" height="300">
+      <circle cx="150" cy="150" r="120" stroke="#E5973D" stroke-width="0.6" fill="none" opacity="0.04"/>
+      <circle cx="150" cy="150" r="90" stroke="#E5973D" stroke-width="0.4" fill="none" opacity="0.04"/>
+      <circle cx="150" cy="150" r="60" stroke="#E5973D" stroke-width="0.2" fill="none" opacity="0.04"/>
+    </pattern>
+  </defs>
+
+  <!-- Background Gradient -->
+  <rect width="100%" height="100%" fill="url(#bgGrad)" />
+
+  <!-- Mandala Pattern -->
+  <rect width="100%" height="100%" fill="url(#mandalaPattern)" />
+
+  <!-- Bride with Lehenga Silhouette -->
+  <path
+    d="M1300 480 C1270 440 1280 380 1320 370 Q1340 360 1360 380 Q1380 400 1370 440 Q1360 480 1300 480 Z"
+    fill="#E5973D"
+    opacity="0.05"
+  />
+
+  <!-- Baraat Horse -->
+  <path
+    d="M200 490 Q190 470 210 450 Q230 430 250 450 Q270 470 260 490 Q250 510 200 490 Z"
+    fill="#E5973D"
+    opacity="0.05"
+  />
+
+  <!-- Dhol Player (Simple Icon) -->
+  <circle cx="400" cy="500" r="30" fill="#E5973D" opacity="0.05" />
+  <rect x="380" y="490" width="40" height="10" fill="#E5973D" opacity="0.05" transform="rotate(-10 400 495)" />
+
+  <!-- Bokeh Decorative Lights -->
+  <circle cx="150" cy="550" r="10" fill="#FFD699" opacity="0.08"/>
+  <circle cx="600" cy="520" r="20" fill="#FFD699" opacity="0.06"/>
+  <circle cx="950" cy="580" r="14" fill="#FFD699" opacity="0.06"/>
+  <circle cx="1200" cy="530" r="12" fill="#FFD699" opacity="0.07"/>
+</svg>
