@@ -55,7 +55,7 @@ export default function WishlistPage() {
 
                   <button
                     onClick={() => removeFromWishlist(product.id)}
-                    className="w-full py-3 flex items-center justify-center gap-2 bg-gradient-to-r from-[#D2691E] to-[#CD853F] text-white font-semibold rounded-xl hover:from-[#CD853F] hover:to-[#D2691E] transition-all duration-300 shadow-md"
+                    className="w-full py-3 flex items-center justify-center gap-2 bg-gradient-to-r from-[#D2691E] to-[#CD853F] text-white font-semibold rounded-xl hover:from-[#CD853F] hover:to-[#D2691E] transition-all duration-300 shadow-md cursor-pointer"
                   >
                     <FaHeart className="text-white" />
                     Remove from Wishlist
