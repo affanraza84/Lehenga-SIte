@@ -262,10 +262,10 @@ export default function ProductsPage() {
     options: { label: string; value: string }[];
     filterKey: keyof typeof filters;
   }) => (
-    <Menu as="div" className="relative inline-block text-left z-50">
+    <Menu as="div" className="relative inline-block text-left">
       {({ open }: { open: boolean }) => (
         <>
-          <Menu.Button className="inline-flex justify-between items-center w-44 px-4 py-2 bg-white text-[#2C1810] font-semibold rounded-lg shadow-md border border-[#E9DCCF] hover:bg-[#F5F1EA] transition-all duration-300 cursor-pointer">
+          <Menu.Button className="inline-flex justify-between items-center w-44 px-4 py-2 z-50 bg-white text-[#2C1810] font-semibold rounded-lg shadow-md border border-[#E9DCCF] hover:bg-[#F5F1EA] transition-all duration-300 cursor-pointer">
             {filters[filterKey] || label}
             {open ? (
               <FaChevronUp className="ml-2 text-sm" />
@@ -282,7 +282,10 @@ export default function ProductsPage() {
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0, transition: { duration: 0.2 } }}
                 exit={{ opacity: 0, y: -10, transition: { duration: 0.2 } }}
-                className="absolute right-0 mt-2 w-44 rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-50"
+                className="fixed w-44 rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-[99999]"
+                style={{
+                  top: "100%", // positioned below button
+                }}
               >
                 {options.map((opt) => (
                   <Menu.Item key={opt.value}>
@@ -344,9 +347,9 @@ export default function ProductsPage() {
       </div>
 
       {/* Filters + Products */}
-      <div className="relative z-10 px-4 pb-16 max-w-7xl mx-auto">
+      <div className="relative z-50 px-4 pb-16 max-w-7xl mx-auto">
         {/* Filters */}
-        <div className="flex flex-wrap justify-center gap-4 mb-12 bg-white/80 backdrop-blur-sm rounded-2xl p-6 border-2 border-[#E9DCCF] relative z-40">
+        <div className="flex flex-wrap justify-center gap-4 mb-12 bg-white/80 backdrop-blur-sm rounded-2xl p-6 border-2 border-[#E9DCCF] relative z-50">
           <Dropdown
             label="Select Size"
             filterKey="size"
@@ -390,7 +393,7 @@ export default function ProductsPage() {
         </div>
 
         {/* Products */}
-        <div className="space-y-8">
+        <div className="space-y-8 relative z-10">
           {filteredProducts.map((product, index) => (
             <ProductRow key={product.id} product={product} index={index} />
           ))}
@@ -414,7 +417,7 @@ export default function ProductsPage() {
         )}
 
         {/* Wishlist Summary */}
-        <div className="mt-12 text-center bg-white/80 backdrop-blur-sm rounded-2xl p-8 border-2 border-[#E9DCCF]">
+        <div className="mt-12 text-center bg-white/80 backdrop-blur-sm rounded-2xl p-8 border-2 border-[#E9DCCF] relative z-10">
           <div className="mb-4">
             {!wishlistLoaded ? (
               <div className="animate-pulse">
