@@ -43,7 +43,7 @@ const FloatingElements = () => {
             viewBox="0 0 20 20"
             className="text-amber-200/20 fill-current"
           >
-            <path d="M10 2c-3 0-5 2-5 5 0 2 1 3 2 4 1 1 2 2 2 3s1 2 3 2 3-1 3-2-1-2-2-3-2-2-2-4c0-3-2-5-3-5z" />
+            <path d="M10 2c-3 0-5 2-5 5 0 2 1 3 2 4 1 1 2 2 2 3s1 2 3 2 3-1 3-2s-1-2-2-3-2-2-2-4c0-3-2-5-3-5z" />
           </svg>
         </div>
       ))}
@@ -265,13 +265,11 @@ export default function ProductsPage() {
     <Menu as="div" className="relative inline-block text-left">
       {({ open }: { open: boolean }) => (
         <>
-          <Menu.Button className="inline-flex justify-between items-center w-44 px-4 py-2 z-50 bg-white text-[#2C1810] font-semibold rounded-lg shadow-md border border-[#E9DCCF] hover:bg-[#F5F1EA] transition-all duration-300 cursor-pointer">
-            {filters[filterKey] || label}
-            {open ? (
-              <FaChevronUp className="ml-2 text-sm" />
-            ) : (
-              <FaChevronDown className="ml-2 text-sm" />
-            )}
+          <Menu.Button className={`inline-flex justify-between items-center w-44 px-4 py-3 bg-gradient-to-r from-white to-[#F5F1EA] text-[#2C1810] font-semibold rounded-xl shadow-lg border-2 border-[#E9DCCF] hover:border-[#D2691E] hover:shadow-xl transform hover:scale-105 transition-all duration-300 cursor-pointer ${open ? 'ring-2 ring-[#D2691E]/30 shadow-xl scale-105' : ''}`}>
+            <span className="truncate">{filters[filterKey] || label}</span>
+            <div className={`ml-2 p-1 rounded-full transition-all duration-300 ${open ? 'bg-[#D2691E]/10 rotate-180' : 'bg-transparent'}`}>
+              <FaChevronDown className={`text-sm transition-colors duration-300 ${open ? 'text-[#D2691E]' : 'text-[#8B4513]'}`} />
+            </div>
           </Menu.Button>
 
           <AnimatePresence>
@@ -279,36 +277,49 @@ export default function ProductsPage() {
               <Menu.Items
                 static
                 as={motion.div}
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0, transition: { duration: 0.2 } }}
-                exit={{ opacity: 0, y: -10, transition: { duration: 0.2 } }}
-                className="fixed w-44 rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-[99999]"
-                style={{
-                  top: "100%", // positioned below button
-                }}
+                initial={{ opacity: 0, x: 15, scale: 0.95 }}
+                animate={{ opacity: 1, x: 0, scale: 1, transition: { duration: 0.3, ease: "easeOut" } }}
+                exit={{ opacity: 0, x: 15, scale: 0.95, transition: { duration: 0.2 } }}
+                className="absolute right-full bottom-0 mr-2 w-52 rounded-xl bg-white/95 backdrop-blur-md shadow-2xl ring-1 ring-[#E9DCCF] border border-[#E9DCCF]/50 focus:outline-none z-[9999] overflow-hidden"
               >
-                {options.map((opt) => (
-                  <Menu.Item key={opt.value}>
-                    {({ active }: { active: boolean }) => (
-                      <button
-                        type="button"
-                        onClick={() =>
-                          setFilters((prev) => ({
-                            ...prev,
-                            [filterKey]: opt.value,
-                          }))
-                        }
-                        className={`${
-                          active
-                            ? "bg-[#F5F1EA] text-[#D2691E]"
-                            : "text-[#2C1810]"
-                        } block px-4 py-2 text-sm w-full text-left cursor-pointer`}
-                      >
-                        {opt.label}
-                      </button>
-                    )}
-                  </Menu.Item>
-                ))}
+                <div className="py-2">
+                  {options.map((opt, index) => (
+                    <Menu.Item key={opt.value}>
+                      {({ active }: { active: boolean }) => (
+                        <motion.button
+                          type="button"
+                          initial={{ opacity: 0, x: -10 }}
+                          animate={{ opacity: 1, x: 0, transition: { delay: index * 0.05 } }}
+                          onClick={() =>
+                            setFilters((prev) => ({
+                              ...prev,
+                              [filterKey]: opt.value,
+                            }))
+                          }
+                          className={`${
+                            active
+                              ? "bg-gradient-to-r from-[#F5F1EA] to-[#E9DCCF] text-[#D2691E] shadow-md"
+                              : "text-[#2C1810] hover:bg-[#F5F1EA]/50"
+                          } ${filters[filterKey] === opt.value ? 'bg-[#D2691E]/10 text-[#D2691E] font-semibold border-l-4 border-[#D2691E]' : ''} 
+                          block px-4 py-3 text-sm w-full text-left cursor-pointer transition-all duration-300 transform hover:translate-x-1 hover:shadow-sm relative group`}
+                        >
+                          <span className="flex items-center justify-between">
+                            {opt.label}
+                            {filters[filterKey] === opt.value && (
+                              <span className="w-2 h-2 bg-[#D2691E] rounded-full animate-pulse"></span>
+                            )}
+                          </span>
+                          {active && (
+                            <div className="absolute left-0 top-0 w-1 h-full bg-gradient-to-b from-[#D2691E] to-[#8B4513] rounded-r"></div>
+                          )}
+                        </motion.button>
+                      )}
+                    </Menu.Item>
+                  ))}
+                </div>
+                
+                {/* Beautiful bottom accent */}
+                <div className="h-1 bg-gradient-to-r from-[#8B4513] via-[#D2691E] to-[#8B4513]"></div>
               </Menu.Items>
             )}
           </AnimatePresence>
@@ -318,7 +329,7 @@ export default function ProductsPage() {
   );
 
   return (
-    <main className="relative min-h-screen bg-gradient-to-br from-[#F5F1EA] via-[#E9DCCF] to-[#DDD0BF]">
+    <main className="relative min-h-screen bg-gradient-to-br from-[#F5F1EA] via-[#E9DCCF] to-[#DDD0BF] pt-20">
       <FloatingElements />
 
       {/* Hero Section */}
@@ -347,9 +358,9 @@ export default function ProductsPage() {
       </div>
 
       {/* Filters + Products */}
-      <div className="relative z-50 px-4 pb-16 max-w-7xl mx-auto">
+      <div className="relative z-10 px-4 pb-16 max-w-7xl mx-auto">
         {/* Filters */}
-        <div className="flex flex-wrap justify-center gap-4 mb-12 bg-white/80 backdrop-blur-sm rounded-2xl p-6 border-2 border-[#E9DCCF] relative z-50">
+        <div className="flex flex-wrap justify-center gap-4 mb-12 bg-white/80 backdrop-blur-sm rounded-2xl p-6 border-2 border-[#E9DCCF] relative z-30">
           <Dropdown
             label="Select Size"
             filterKey="size"

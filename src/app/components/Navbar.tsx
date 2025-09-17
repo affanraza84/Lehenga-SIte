@@ -22,7 +22,7 @@ const extraLinks = [
 ];
 
 const announcements = [
-  "Book an in-store or video appointment for personalized service!",
+  "Shop your way - Get the best one!",
   "Free shipping on every order — delivered across India!",
   "Enjoy hassle-free returns and exchanges",
 ];
