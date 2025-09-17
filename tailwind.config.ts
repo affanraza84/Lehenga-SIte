@@ -2,18 +2,20 @@ import type { Config } from "tailwindcss";
 
 const config: Config = {
   content: [
-    "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/**/*.{js,ts,jsx,tsx}",
+    "./components/**/*.{js,ts,jsx,tsx}",
+    "./app/**/*.{js,ts,jsx,tsx}",
+  ],
+  // @ts-expect-error - safelist is supported at runtime but missing in types
+  safelist: [
+    "absolute",
+    "left-0",
+    "bottom-full",
+    "mb-2",
+    "z-50",
   ],
   theme: {
-    extend: {
-      colors: {
-        brandBrown: "#421C05",
-        brandOrange: "#E5973D",
-        brandText: "#2C1810",
-      },
-    },
+    extend: {},
   },
   plugins: [],
 };
