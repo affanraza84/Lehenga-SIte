@@ -265,10 +265,22 @@ export default function ProductsPage() {
     <Menu as="div" className="relative inline-block text-left">
       {({ open }: { open: boolean }) => (
         <>
-          <Menu.Button className={`inline-flex justify-between items-center w-44 px-4 py-3 bg-gradient-to-r from-white to-[#F5F1EA] text-[#2C1810] font-semibold rounded-xl shadow-lg border-2 border-[#E9DCCF] hover:border-[#D2691E] hover:shadow-xl transform hover:scale-105 transition-all duration-300 cursor-pointer ${open ? 'ring-2 ring-[#D2691E]/30 shadow-xl scale-105' : ''}`}>
+          <Menu.Button
+            className={`inline-flex justify-between items-center w-44 px-4 py-3 bg-gradient-to-r from-white to-[#F5F1EA] text-[#2C1810] font-semibold rounded-xl shadow-lg border-2 border-[#E9DCCF] hover:border-[#D2691E] hover:shadow-xl transform hover:scale-105 transition-all duration-300 cursor-pointer ${
+              open ? "ring-2 ring-[#D2691E]/30 shadow-xl scale-105" : ""
+            }`}
+          >
             <span className="truncate">{filters[filterKey] || label}</span>
-            <div className={`ml-2 p-1 rounded-full transition-all duration-300 ${open ? 'bg-[#D2691E]/10 rotate-180' : 'bg-transparent'}`}>
-              <FaChevronDown className={`text-sm transition-colors duration-300 ${open ? 'text-[#D2691E]' : 'text-[#8B4513]'}`} />
+            <div
+              className={`ml-2 p-1 rounded-full transition-all duration-300 ${
+                open ? "bg-[#D2691E]/10 rotate-180" : "bg-transparent"
+              }`}
+            >
+              <FaChevronDown
+                className={`text-sm transition-colors duration-300 ${
+                  open ? "text-[#D2691E]" : "text-[#8B4513]"
+                }`}
+              />
             </div>
           </Menu.Button>
 
@@ -277,10 +289,20 @@ export default function ProductsPage() {
               <Menu.Items
                 static
                 as={motion.div}
-                initial={{ opacity: 0, x: 15, scale: 0.95 }}
-                animate={{ opacity: 1, x: 0, scale: 1, transition: { duration: 0.3, ease: "easeOut" } }}
-                exit={{ opacity: 0, x: 15, scale: 0.95, transition: { duration: 0.2 } }}
-                className="absolute right-full bottom-0 mr-2 w-52 rounded-xl bg-white/95 backdrop-blur-md shadow-2xl ring-1 ring-[#E9DCCF] border border-[#E9DCCF]/50 focus:outline-none z-[9999] overflow-hidden"
+                initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                animate={{
+                  opacity: 1,
+                  y: 0,
+                  scale: 1,
+                  transition: { duration: 0.25, ease: "easeOut" },
+                }}
+                exit={{
+                  opacity: 0,
+                  y: 10,
+                  scale: 0.95,
+                  transition: { duration: 0.2 },
+                }}
+                className="absolute bottom-full left-0 mb-2 w-52 rounded-xl bg-white/95 backdrop-blur-md shadow-2xl ring-1 ring-[#E9DCCF] border border-[#E9DCCF]/50 focus:outline-none z-[9999] overflow-hidden"
               >
                 <div className="py-2">
                   {options.map((opt, index) => (
@@ -289,7 +311,11 @@ export default function ProductsPage() {
                         <motion.button
                           type="button"
                           initial={{ opacity: 0, x: -10 }}
-                          animate={{ opacity: 1, x: 0, transition: { delay: index * 0.05 } }}
+                          animate={{
+                            opacity: 1,
+                            x: 0,
+                            transition: { delay: index * 0.05 },
+                          }}
                           onClick={() =>
                             setFilters((prev) => ({
                               ...prev,
@@ -300,7 +326,11 @@ export default function ProductsPage() {
                             active
                               ? "bg-gradient-to-r from-[#F5F1EA] to-[#E9DCCF] text-[#D2691E] shadow-md"
                               : "text-[#2C1810] hover:bg-[#F5F1EA]/50"
-                          } ${filters[filterKey] === opt.value ? 'bg-[#D2691E]/10 text-[#D2691E] font-semibold border-l-4 border-[#D2691E]' : ''} 
+                          } ${
+                            filters[filterKey] === opt.value
+                              ? "bg-[#D2691E]/10 text-[#D2691E] font-semibold border-l-4 border-[#D2691E]"
+                              : ""
+                          } 
                           block px-4 py-3 text-sm w-full text-left cursor-pointer transition-all duration-300 transform hover:translate-x-1 hover:shadow-sm relative group`}
                         >
                           <span className="flex items-center justify-between">
@@ -317,8 +347,8 @@ export default function ProductsPage() {
                     </Menu.Item>
                   ))}
                 </div>
-                
-                {/* Beautiful bottom accent */}
+
+                {/* Bottom accent */}
                 <div className="h-1 bg-gradient-to-r from-[#8B4513] via-[#D2691E] to-[#8B4513]"></div>
               </Menu.Items>
             )}
