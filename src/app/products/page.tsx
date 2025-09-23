@@ -1,14 +1,32 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { FaStar } from "react-icons/fa";
+import { FaStar, FaEye } from "react-icons/fa";
 import Image from "next/image";
+import Link from "next/link";
 import { useCart } from "@/app/context/CartContext";
+import { ReviewProvider, useReview } from "@/app/context/ReviewContext";
 import products from "@/app/data/products";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 
-// Floating decorative elements
+interface Product {
+  id: number;
+  title: string;
+  image: string;
+  price: number;
+  description?: string;
+}
+
+interface Review {
+  productId: number;
+  productTitle: string;
+  productImage: string;
+  rating: number;
+  timestamp: number;
+}
+
+/* Floating decorative elements */
 const FloatingElements = () => {
   return (
     <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
@@ -53,11 +71,23 @@ const FloatingElements = () => {
   );
 };
 
-export default function ProductsPage() {
+/* Inner page that uses hooks (must be inside ReviewProvider) */
+function ProductsPageInner() {
   const { addToCart } = useCart();
+  const { reviews = [], addReview } = useReview();
+
   const [hoveredProduct, setHoveredProduct] = useState<number | null>(null);
+  const [hoveredStar, setHoveredStar] = useState<Record<number, number | null>>({});
   const [isLoaded, setIsLoaded] = useState(false);
   const [highlightedProduct, setHighlightedProduct] = useState<number | null>(null);
+  const [localReviews, setLocalReviews] = useState<Review[]>([]);
+  const [showThankYou, setShowThankYou] = useState<Record<number, boolean>>({});
+
+  // Load reviews from localStorage
+  useEffect(() => {
+    const storedReviews = JSON.parse(localStorage.getItem('reviews') || '[]');
+    setLocalReviews(storedReviews);
+  }, []);
 
   useEffect(() => {
     setIsLoaded(true);
@@ -80,12 +110,59 @@ export default function ProductsPage() {
     }
   }, []);
 
+  // Handle star rating
+  const handleStarRating = (product: Product, rating: number) => {
+    const newReview: Review = {
+      productId: product.id,
+      productTitle: product.title,
+      productImage: product.image,
+      rating: rating,
+      timestamp: Date.now()
+    };
+
+    // Update localStorage
+    const existingReviews = JSON.parse(localStorage.getItem('reviews') || '[]');
+    const existingIndex = existingReviews.findIndex((r: Review) => r.productId === product.id);
+    
+    if (existingIndex >= 0) {
+      existingReviews[existingIndex] = newReview;
+    } else {
+      existingReviews.push(newReview);
+    }
+    
+    localStorage.setItem('reviews', JSON.stringify(existingReviews));
+    setLocalReviews(existingReviews);
+
+    // Add to context if available
+    if (addReview) {
+      addReview({
+        id: product.id,
+        title: product.title,
+        price: product.price,
+        image: product.image,
+        rating: rating,
+      });
+    }
+
+    // Show thank you message
+    setShowThankYou(prev => ({ ...prev, [product.id]: true }));
+    setTimeout(() => {
+      setShowThankYou(prev => ({ ...prev, [product.id]: false }));
+    }, 3000);
+  };
+
+  // Get product rating from localStorage
+  const getProductRating = (productId: number): number => {
+    const review = localReviews.find(r => r.productId === productId);
+    return review ? review.rating : 0;
+  };
+
   return (
     <main className="relative min-h-screen bg-gradient-to-br from-[#F5F1EA] via-[#E9DCCF] to-[#DDD0BF] pt-24">
-        <Navbar/>
+      <Navbar />
       <FloatingElements />
 
-      {/* Hero Section */}
+      {/* Hero */}
       <section className="relative z-10 text-center py-16 px-4">
         <div className="max-w-4xl mx-auto">
           <h1 className="text-4xl md:text-6xl font-bold text-[#2C1810] mb-4 tracking-wide">
@@ -97,17 +174,35 @@ export default function ProductsPage() {
           </p>
           <div className="flex justify-center space-x-2 mb-8">
             {[...Array(5)].map((_, i) => (
-              <FaStar key={i} className="text-[#D2691E] text-2xl animate-pulse" style={{ animationDelay: `${i*0.1}s` }} />
+              <FaStar key={i} className="text-[#D2691E] text-2xl animate-pulse" style={{ animationDelay: `${i * 0.1}s` }} />
             ))}
           </div>
+
+          {/* Reviews Link */}
+          {localReviews.length > 0 && (
+            <div className="mt-8">
+              <Link
+                href="/reviews"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#8B4513] to-[#D2691E] text-white font-semibold rounded-xl hover:from-[#D2691E] hover:to-[#8B4513] transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
+              >
+                <FaEye className="text-white" />
+                View Your Reviews ({localReviews.length})
+              </Link>
+            </div>
+          )}
         </div>
       </section>
 
       {/* Products Grid */}
       <section className="relative z-10 px-4 pb-16">
         <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-          {products.map((product, index) => {
+          {products.map((product: Product, index: number) => {
             const isHighlighted = highlightedProduct === product.id;
+            const productRating = getProductRating(product.id);
+            const currentHoveredStar = hoveredStar[product.id];
+            const displayRating = currentHoveredStar ?? productRating;
+            const hasThankYou = showThankYou[product.id];
+
             return (
               <div
                 key={product.id}
@@ -117,12 +212,12 @@ export default function ProductsPage() {
                 } ${isHighlighted ? "ring-4 ring-[#D2691E] ring-offset-2 animate-pulse" : ""}`}
                 style={{
                   transitionDelay: `${index * 50}ms`,
-                  animation: isLoaded ? `slideUp 0.8s ease-out ${index*0.05}s both` : "none",
+                  animation: isLoaded ? `slideUp 0.8s ease-out ${index * 0.05}s both` : "none",
                 }}
                 onMouseEnter={() => setHoveredProduct(product.id)}
                 onMouseLeave={() => setHoveredProduct(null)}
               >
-                {/* Product Card */}
+                {/* Card */}
                 <div className="relative bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden border-2 border-[#E9DCCF] hover:border-[#D2691E]/30">
                   <div className="relative h-80 w-full overflow-hidden">
                     <Image
@@ -131,15 +226,69 @@ export default function ProductsPage() {
                       fill
                       className="object-cover group-hover:scale-110 transition-transform duration-700"
                     />
+                    
+                    {/* Thank you overlay */}
+                    {hasThankYou && (
+                      <div className="absolute inset-0 bg-[#D2691E]/90 flex items-center justify-center transition-all duration-500">
+                        <div className="text-center text-white">
+                          <FaStar className="text-4xl mx-auto mb-2 animate-bounce" />
+                          <p className="text-lg font-semibold">Thank you for rating!</p>
+                          <p className="text-sm opacity-90">Your review has been saved</p>
+                        </div>
+                      </div>
+                    )}
                   </div>
+
                   <div className="p-6 space-y-4 bg-gradient-to-b from-white to-[#F5F1EA]/50">
                     <h3 className="font-semibold text-[#2C1810] line-clamp-2 group-hover:text-[#D2691E] transition-colors duration-300 leading-snug">
                       {product.title}
                     </h3>
+
+                    {/* Price + Rating Display */}
                     <div className="flex items-center justify-between">
                       <p className="text-2xl font-bold text-[#D2691E]">₹{product.price.toLocaleString("en-IN")}</p>
-                      <div className="flex">{[...Array(5)].map((_, i) => <FaStar key={i} className="text-[#D2691E] text-sm" />)}</div>
+                      
+                      {productRating > 0 && (
+                        <div className="flex items-center gap-1 text-sm text-[#8B4513]">
+                          <FaStar className="text-[#D2691E]" />
+                          <span className="font-medium">({productRating}/5)</span>
+                        </div>
+                      )}
                     </div>
+
+                    {/* Interactive Star Rating */}
+                    <div className="space-y-2">
+                      <p className="text-sm text-[#8B4513] font-medium">Rate this product:</p>
+                      <div className="flex space-x-1">
+                        {[...Array(5)].map((_, i) => {
+                          const starValue = i + 1;
+                          const isActive = displayRating >= starValue;
+
+                          return (
+                            <button
+                              key={i}
+                              className="transition-all duration-200 transform hover:scale-110 focus:outline-none"
+                              onClick={() => handleStarRating(product, starValue)}
+                              onMouseEnter={() => setHoveredStar((prev) => ({ ...prev, [product.id]: starValue }))}
+                              onMouseLeave={() => setHoveredStar((prev) => ({ ...prev, [product.id]: null }))}
+                            >
+                              <FaStar
+                                className={`text-lg ${
+                                  isActive ? "text-[#D2691E]" : "text-gray-300"
+                                } hover:text-[#D2691E] transition-colors duration-200 cursor-pointer`}
+                              />
+                            </button>
+                          );
+                        })}
+                      </div>
+                      
+                      {productRating > 0 && (
+                        <p className="text-xs text-[#8B4513]/70">
+                          You rated this product {productRating} star{productRating > 1 ? 's' : ''}
+                        </p>
+                      )}
+                    </div>
+
                     <button
                       onClick={() => addToCart(product)}
                       className="w-full py-3 bg-gradient-to-r from-[#8B4513] to-[#D2691E] text-white font-semibold rounded-xl hover:from-[#D2691E] hover:to-[#8B4513] transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl border border-[#8B4513]/20 cursor-pointer"
@@ -166,11 +315,63 @@ export default function ProductsPage() {
         </div>
       </section>
 
+      {/* Review Summary Section */}
+      {localReviews.length > 0 && (
+        <section className="relative z-10 px-4 pb-16">
+          <div className="max-w-4xl mx-auto">
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-8 border-2 border-[#E9DCCF] text-center">
+              <h2 className="text-2xl font-bold text-[#2C1810] mb-4">
+                Your Review Summary
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                <div className="space-y-2">
+                  <div className="text-3xl font-bold text-[#D2691E]">
+                    {localReviews.length}
+                  </div>
+                  <div className="text-sm text-[#8B4513] font-medium">
+                    Products Reviewed
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <div className="text-3xl font-bold text-[#D2691E]">
+                    {(localReviews.reduce((sum, review) => sum + review.rating, 0) / localReviews.length).toFixed(1)} ★
+                  </div>
+                  <div className="text-sm text-[#8B4513] font-medium">
+                    Average Rating
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <div className="text-3xl font-bold text-[#D2691E]">
+                    {localReviews.filter(r => r.rating === 5).length}
+                  </div>
+                  <div className="text-sm text-[#8B4513] font-medium">
+                    5-Star Reviews
+                  </div>
+                </div>
+              </div>
+              <Link
+                href="/reviews"
+                className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-[#8B4513] to-[#D2691E] text-white font-semibold rounded-xl hover:from-[#D2691E] hover:to-[#8B4513] transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
+              >
+                <FaEye className="text-white" />
+                View All Reviews ({localReviews.length})
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Animations */}
       <style jsx>{`
         @keyframes slideUp {
-          from { opacity: 0; transform: translateY(50px); }
-          to { opacity: 1; transform: translateY(0); }
+          from {
+            opacity: 0;
+            transform: translateY(50px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
         }
 
         .line-clamp-2 {
@@ -180,7 +381,17 @@ export default function ProductsPage() {
           overflow: hidden;
         }
       `}</style>
-      <Footer/>
+
+      <Footer />
     </main>
+  );
+}
+
+/* Export default — wrapped with ReviewProvider so useReview works safely */
+export default function ProductsPage() {
+  return (
+    <ReviewProvider>
+      <ProductsPageInner />
+    </ReviewProvider>
   );
 }

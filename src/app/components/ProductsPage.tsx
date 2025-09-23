@@ -1,16 +1,15 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { FaStar, FaChevronDown, FaChevronUp, FaHeart } from "react-icons/fa";
+import { FaStar, FaHeart, FaFilter } from "react-icons/fa";
 import Image from "next/image";
 import { useCart } from "@/app/context/CartContext";
 import products from "../data/productsDetails";
-import { Menu } from "@headlessui/react";
-import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { useWishlist } from "@/app/context/WishlistContext";
+import ProductFilter from "./ProductFilter";
 
-// Product type
+// Product and Filter types
 interface Product {
   id: number;
   title: string;
@@ -21,6 +20,21 @@ interface Product {
   color: string;
   images: string[];
   videoUrl: string;
+}
+
+interface Filters {
+  size: string;
+  price: string;
+  fabric: string;
+  color: string;
+}
+
+interface Review {
+  productId: number;
+  productTitle: string;
+  productImage: string;
+  rating: number;
+  timestamp: number;
 }
 
 const FloatingElements = () => {
@@ -51,6 +65,78 @@ const FloatingElements = () => {
   );
 };
 
+// Star Rating Component
+const StarRating = ({
+  productId,
+  productTitle,
+  productImage,
+  currentRating,
+  onRate,
+}: {
+  productId: number;
+  productTitle: string;
+  productImage: string;
+  currentRating: number;
+  onRate: (rating: number) => void;
+}) => {
+  const [hoveredRating, setHoveredRating] = useState(0);
+  const [selectedRating, setSelectedRating] = useState(currentRating);
+
+  const handleStarClick = (rating: number) => {
+    setSelectedRating(rating);
+    onRate(rating);
+
+    // Add to reviews
+    const reviews = JSON.parse(localStorage.getItem("reviews") || "[]");
+    const existingReviewIndex = reviews.findIndex(
+      (r: Review) => r.productId === productId
+    );
+
+    const newReview: Review = {
+      productId,
+      productTitle,
+      productImage,
+      rating,
+      timestamp: Date.now(),
+    };
+
+    if (existingReviewIndex >= 0) {
+      reviews[existingReviewIndex] = newReview;
+    } else {
+      reviews.push(newReview);
+    }
+
+    localStorage.setItem("reviews", JSON.stringify(reviews));
+  };
+
+  return (
+    <div className="flex items-center gap-1">
+      {[1, 2, 3, 4, 5].map((star) => (
+        <button
+          key={star}
+          className="transition-all duration-200 transform hover:scale-110"
+          onMouseEnter={() => setHoveredRating(star)}
+          onMouseLeave={() => setHoveredRating(0)}
+          onClick={() => handleStarClick(star)}
+        >
+          <FaStar
+            className={`text-lg ${
+              star <= (hoveredRating || selectedRating)
+                ? "text-[#D2691E]"
+                : "text-gray-300"
+            } hover:text-[#D2691E] transition-colors duration-200 cursor-pointer`}
+          />
+        </button>
+      ))}
+      {selectedRating > 0 && (
+        <span className="text-sm text-[#8B4513] ml-2 font-medium">
+          ({selectedRating}/5)
+        </span>
+      )}
+    </div>
+  );
+};
+
 const ProductRow = ({
   product,
   index,
@@ -60,6 +146,7 @@ const ProductRow = ({
 }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [userRating, setUserRating] = useState(0);
   const { addToCart } = useCart();
   const {
     addToWishlist,
@@ -81,6 +168,21 @@ const ProductRow = ({
     }, 3000);
     return () => clearInterval(interval);
   }, [product.images.length]);
+
+  // Load existing rating
+  useEffect(() => {
+    const reviews = JSON.parse(localStorage.getItem("reviews") || "[]");
+    const existingReview = reviews.find(
+      (r: Review) => r.productId === product.id
+    );
+    if (existingReview) {
+      setUserRating(existingReview.rating);
+    }
+  }, [product.id]);
+
+  const handleRating = (rating: number) => {
+    setUserRating(rating);
+  };
 
   return (
     <div
@@ -172,11 +274,25 @@ const ProductRow = ({
                 <span className="text-3xl font-bold text-[#D2691E]">
                   ₹{product.price.toLocaleString("en-IN")}
                 </span>
-                <div className="flex items-center">
-                  {[...Array(5)].map((_, i) => (
-                    <FaStar key={i} className="text-[#D2691E] text-sm" />
-                  ))}
-                </div>
+              </div>
+
+              {/* Interactive Star Rating */}
+              <div className="mb-4">
+                <p className="text-sm text-[#8B4513] mb-2 font-medium">
+                  Rate this product:
+                </p>
+                <StarRating
+                  productId={product.id}
+                  productTitle={product.title}
+                  productImage={product.images[0]}
+                  currentRating={userRating}
+                  onRate={handleRating}
+                />
+                {userRating > 0 && (
+                  <p className="text-xs text-[#8B4513]/70 mt-1">
+                    Thank you for your rating!
+                  </p>
+                )}
               </div>
 
               <div className="grid grid-cols-3 gap-2 mb-6">
@@ -224,19 +340,22 @@ const ProductRow = ({
 
 export default function ProductsPage() {
   const { wishlistCount, isLoaded: wishlistLoaded } = useWishlist();
+  const [reviewsCount, setReviewsCount] = useState(0);
 
-  const [filters, setFilters] = useState<{
-    size: string;
-    price: string;
-    fabric: string;
-    color: string;
-  }>({
+  const [filters, setFilters] = useState<Filters>({
     size: "",
     price: "",
     fabric: "",
     color: "",
   });
 
+  // Load reviews count
+  useEffect(() => {
+    const reviews = JSON.parse(localStorage.getItem("reviews") || "[]");
+    setReviewsCount(reviews.length);
+  }, []);
+
+  // Filter logic
   const filteredProducts = products.filter((product: Product) => {
     const matchesSize = filters.size ? product.size === filters.size : true;
     const matchesPrice = filters.price
@@ -253,110 +372,9 @@ export default function ProductsPage() {
     return matchesSize && matchesPrice && matchesFabric && matchesColor;
   });
 
-  const Dropdown = ({
-    label,
-    options,
-    filterKey,
-  }: {
-    label: string;
-    options: { label: string; value: string }[];
-    filterKey: keyof typeof filters;
-  }) => (
-    <Menu as="div" className="relative inline-block text-left">
-      {({ open }: { open: boolean }) => (
-        <>
-          <Menu.Button
-            className={`inline-flex justify-between items-center w-44 px-4 py-3 bg-gradient-to-r from-white to-[#F5F1EA] text-[#2C1810] font-semibold rounded-xl shadow-lg border-2 border-[#E9DCCF] hover:border-[#D2691E] hover:shadow-xl transform hover:scale-105 transition-all duration-300 cursor-pointer ${
-              open ? "ring-2 ring-[#D2691E]/30 shadow-xl scale-105" : ""
-            }`}
-          >
-            <span className="truncate">{filters[filterKey] || label}</span>
-            <div
-              className={`ml-2 p-1 rounded-full transition-all duration-300 ${
-                open ? "bg-[#D2691E]/10 rotate-180" : "bg-transparent"
-              }`}
-            >
-              <FaChevronDown
-                className={`text-sm transition-colors duration-300 ${
-                  open ? "text-[#D2691E]" : "text-[#8B4513]"
-                }`}
-              />
-            </div>
-          </Menu.Button>
-
-          <AnimatePresence>
-            {open && (
-              <Menu.Items
-                static
-                as={motion.div}
-                initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                animate={{
-                  opacity: 1,
-                  y: 0,
-                  scale: 1,
-                  transition: { duration: 0.25, ease: "easeOut" },
-                }}
-                exit={{
-                  opacity: 0,
-                  y: 10,
-                  scale: 0.95,
-                  transition: { duration: 0.2 },
-                }}
-                className="absolute bottom-full left-0 mb-2 w-52 rounded-xl bg-white/95 backdrop-blur-md shadow-2xl ring-1 ring-[#E9DCCF] border border-[#E9DCCF]/50 focus:outline-none z-[9999] overflow-hidden"
-              >
-                <div className="py-2">
-                  {options.map((opt, index) => (
-                    <Menu.Item key={opt.value}>
-                      {({ active }: { active: boolean }) => (
-                        <motion.button
-                          type="button"
-                          initial={{ opacity: 0, x: -10 }}
-                          animate={{
-                            opacity: 1,
-                            x: 0,
-                            transition: { delay: index * 0.05 },
-                          }}
-                          onClick={() =>
-                            setFilters((prev) => ({
-                              ...prev,
-                              [filterKey]: opt.value,
-                            }))
-                          }
-                          className={`${
-                            active
-                              ? "bg-gradient-to-r from-[#F5F1EA] to-[#E9DCCF] text-[#D2691E] shadow-md"
-                              : "text-[#2C1810] hover:bg-[#F5F1EA]/50"
-                          } ${
-                            filters[filterKey] === opt.value
-                              ? "bg-[#D2691E]/10 text-[#D2691E] font-semibold border-l-4 border-[#D2691E]"
-                              : ""
-                          } 
-                          block px-4 py-3 text-sm w-full text-left cursor-pointer transition-all duration-300 transform hover:translate-x-1 hover:shadow-sm relative group`}
-                        >
-                          <span className="flex items-center justify-between">
-                            {opt.label}
-                            {filters[filterKey] === opt.value && (
-                              <span className="w-2 h-2 bg-[#D2691E] rounded-full animate-pulse"></span>
-                            )}
-                          </span>
-                          {active && (
-                            <div className="absolute left-0 top-0 w-1 h-full bg-gradient-to-b from-[#D2691E] to-[#8B4513] rounded-r"></div>
-                          )}
-                        </motion.button>
-                      )}
-                    </Menu.Item>
-                  ))}
-                </div>
-
-                {/* Bottom accent */}
-                <div className="h-1 bg-gradient-to-r from-[#8B4513] via-[#D2691E] to-[#8B4513]"></div>
-              </Menu.Items>
-            )}
-          </AnimatePresence>
-        </>
-      )}
-    </Menu>
-  );
+  const handleFiltersChange = (newFilters: Filters) => {
+    setFilters(newFilters);
+  };
 
   return (
     <main className="relative min-h-screen bg-gradient-to-br from-[#F5F1EA] via-[#E9DCCF] to-[#DDD0BF] pt-20">
@@ -388,104 +406,76 @@ export default function ProductsPage() {
       </div>
 
       {/* Filters + Products */}
-      <div className="relative z-10 px-4 pb-16 max-w-7xl mx-auto">
-        {/* Filters */}
-        <div className="flex flex-wrap justify-center gap-4 mb-12 bg-white/80 backdrop-blur-sm rounded-2xl p-6 border-2 border-[#E9DCCF] relative z-30">
-          <Dropdown
-            label="Select Size"
-            filterKey="size"
-            options={[
-              { label: "All Sizes", value: "" },
-              { label: "Small", value: "S" },
-              { label: "Medium", value: "M" },
-              { label: "Large", value: "L" },
-              { label: "XL", value: "XL" },
-            ]}
-          />
-          <Dropdown
-            label="Select Price"
-            filterKey="price"
-            options={[
-              { label: "All Prices", value: "" },
-              { label: "Under ₹5000", value: "0-5000" },
-              { label: "₹5000 - ₹10000", value: "5000-10000" },
-              { label: "₹10000 - ₹20000", value: "10000-20000" },
-              { label: "Above ₹20000", value: "20000-" },
-            ]}
-          />
-          <Dropdown
-            label="Select Fabric"
-            filterKey="fabric"
-            options={[
-              { label: "All Fabrics", value: "" },
-              { label: "Silk", value: "silk" },
-              { label: "Cotton", value: "cotton" },
-            ]}
-          />
-          <Dropdown
-            label="Select Color"
-            filterKey="color"
-            options={[
-              { label: "All Colors", value: "" },
-              { label: "Red", value: "red" },
-              { label: "Yellow", value: "yellow" },
-            ]}
-          />
-        </div>
+      <div className="relative left-20">
+        <ProductFilter
+          filters={filters}
+          onFiltersChange={handleFiltersChange}
+          resultsCount={filteredProducts.length}
+        />
+      </div>
+      <div className="relative z-auto px-4 pb-16 max-w-7xl mx-auto">
+        <div className="flex gap-6">
 
-        {/* Products */}
-        <div className="space-y-8 relative z-10">
-          {filteredProducts.map((product, index) => (
-            <ProductRow key={product.id} product={product} index={index} />
-          ))}
-        </div>
+          {/* Products */}
+          <div className="flex-1 space-y-8">
+            {filteredProducts.map((product, index) => (
+              <ProductRow key={product.id} product={product} index={index} />
+            ))}
 
-        {/* No Products Found */}
-        {filteredProducts.length === 0 && (
-          <div className="text-center py-16 bg-white/80 backdrop-blur-sm rounded-2xl border-2 border-[#E9DCCF]">
-            <p className="text-xl text-[#8B4513] font-medium">
-              No products found matching your filters.
-            </p>
-            <button
-              onClick={() =>
-                setFilters({ size: "", price: "", fabric: "", color: "" })
-              }
-              className="mt-4 px-6 py-3 bg-gradient-to-r from-[#8B4513] to-[#D2691E] text-white font-semibold rounded-xl hover:from-[#D2691E] hover:to-[#8B4513] transition-all duration-300 cursor-pointer"
-            >
-              Clear All Filters
-            </button>
-          </div>
-        )}
-
-        {/* Wishlist Summary */}
-        <div className="mt-12 text-center bg-white/80 backdrop-blur-sm rounded-2xl p-8 border-2 border-[#E9DCCF] relative z-10">
-          <div className="mb-4">
-            {!wishlistLoaded ? (
-              <div className="animate-pulse">
-                <div className="h-6 bg-gray-300 rounded mx-auto w-48 mb-4"></div>
+            {/* No Products Found */}
+            {filteredProducts.length === 0 && (
+              <div className="text-center py-16 bg-white/80 backdrop-blur-sm rounded-2xl border-2 border-[#E9DCCF]">
+                <FaFilter className="text-4xl text-[#D2691E] mx-auto mb-4" />
+                <p className="text-xl text-[#8B4513] font-medium mb-2">
+                  No products found matching your filters.
+                </p>
+                <p className="text-sm text-[#8B4513]/70">
+                  Try adjusting your filters or clear all filters to see all
+                  products.
+                </p>
+                <button
+                  onClick={() =>
+                    setFilters({ size: "", price: "", fabric: "", color: "" })
+                  }
+                  className="mt-4 px-6 py-2 bg-gradient-to-r from-[#8B4513] to-[#D2691E] text-white font-semibold rounded-lg hover:from-[#D2691E] hover:to-[#8B4513] transition-all duration-300"
+                >
+                  Clear All Filters
+                </button>
               </div>
-            ) : (
-              <p className="text-[#8B4513] text-lg font-medium">
-                {wishlistCount === 0
-                  ? "Your wishlist is empty"
-                  : `You have ${wishlistCount} item${
-                      wishlistCount === 1 ? "" : "s"
-                    } in your wishlist`}
-              </p>
             )}
-          </div>
 
-          {wishlistLoaded && wishlistCount > 0 && (
-            <Link
-              href="/wishlist"
-              className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-[#8B4513] to-[#D2691E] text-white font-semibold rounded-xl hover:from-[#D2691E] hover:to-[#8B4513] transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
-            >
-              <FaHeart className="text-white" />
-              View Wishlist ({wishlistCount})
-            </Link>
-          )}
+            {/* Wishlist Summary */}
+            <div className="mt-12 text-center bg-white/80 backdrop-blur-sm rounded-2xl p-8 border-2 border-[#E9DCCF] relative z-10">
+              <div className="mb-4">
+                {!wishlistLoaded ? (
+                  <div className="animate-pulse">
+                    <div className="h-6 bg-gray-300 rounded mx-auto w-48 mb-4"></div>
+                  </div>
+                ) : (
+                  <p className="text-[#8B4513] text-lg font-medium">
+                    {wishlistCount === 0
+                      ? "Your wishlist is empty"
+                      : `You have ${wishlistCount} item${
+                          wishlistCount === 1 ? "" : "s"
+                        } in your wishlist`}
+                  </p>
+                )}
+              </div>
+
+              {wishlistLoaded && wishlistCount > 0 && (
+                <Link
+                  href="/wishlist"
+                  className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-[#8B4513] to-[#D2691E] text-white font-semibold rounded-xl hover:from-[#D2691E] hover:to-[#8B4513] transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
+                >
+                  <FaHeart className="text-white" />
+                  View Wishlist ({wishlistCount})
+                </Link>
+              )}
+            </div>
+          </div>
         </div>
       </div>
+
       <style jsx>{`
         @keyframes slideUp {
           from {
