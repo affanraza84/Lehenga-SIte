@@ -340,7 +340,6 @@ const ProductRow = ({
 
 export default function ProductsPage() {
   const { wishlistCount, isLoaded: wishlistLoaded } = useWishlist();
-  const [reviewsCount, setReviewsCount] = useState(0);
 
   const [filters, setFilters] = useState<Filters>({
     size: "",
@@ -348,12 +347,6 @@ export default function ProductsPage() {
     fabric: "",
     color: "",
   });
-
-  // Load reviews count
-  useEffect(() => {
-    const reviews = JSON.parse(localStorage.getItem("reviews") || "[]");
-    setReviewsCount(reviews.length);
-  }, []);
 
   // Filter logic
   const filteredProducts = products.filter((product: Product) => {
@@ -415,7 +408,6 @@ export default function ProductsPage() {
       </div>
       <div className="relative z-auto px-4 pb-16 max-w-7xl mx-auto">
         <div className="flex gap-6">
-
           {/* Products */}
           <div className="flex-1 space-y-8">
             {filteredProducts.map((product, index) => (
@@ -486,6 +478,12 @@ export default function ProductsPage() {
             opacity: 1;
             transform: translateY(0);
           }
+        }
+        .line-clamp-2 {
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
         }
         .line-clamp-2 {
           display: -webkit-box;

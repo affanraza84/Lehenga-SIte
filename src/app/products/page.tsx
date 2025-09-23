@@ -74,7 +74,7 @@ const FloatingElements = () => {
 /* Inner page that uses hooks (must be inside ReviewProvider) */
 function ProductsPageInner() {
   const { addToCart } = useCart();
-  const { reviews = [], addReview } = useReview();
+  const { addReview } = useReview(); // Removed 'reviews' to fix the unused variable warning
 
   const [hoveredProduct, setHoveredProduct] = useState<number | null>(null);
   const [hoveredStar, setHoveredStar] = useState<Record<number, number | null>>({});
@@ -182,7 +182,7 @@ function ProductsPageInner() {
           {localReviews.length > 0 && (
             <div className="mt-8">
               <Link
-                href="/reviews"
+                href="/review"
                 className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#8B4513] to-[#D2691E] text-white font-semibold rounded-xl hover:from-[#D2691E] hover:to-[#8B4513] transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
               >
                 <FaEye className="text-white" />
