@@ -111,30 +111,47 @@ const StarRating = ({
   };
 
   return (
-    <div className="flex items-center gap-1">
-      {[1, 2, 3, 4, 5].map((star) => (
-        <button
-          key={star}
-          className="transition-all duration-200 transform hover:scale-110"
-          onMouseEnter={() => setHoveredRating(star)}
-          onMouseLeave={() => setHoveredRating(0)}
-          onClick={() => handleStarClick(star)}
-        >
-          <FaStar
-            className={`text-lg ${
-              star <= (hoveredRating || selectedRating)
-                ? "text-[#D2691E]"
-                : "text-gray-300"
-            } hover:text-[#D2691E] transition-colors duration-200 cursor-pointer`}
-          />
-        </button>
-      ))}
-      {selectedRating > 0 && (
-        <span className="text-sm text-[#8B4513] ml-2 font-medium">
-          ({selectedRating}/5)
-        </span>
-      )}
-    </div>
+    <>
+      {/* ✅ Only signed-in users can rate */}
+      <SignedIn>
+        <div className="flex items-center gap-1">
+          {[1, 2, 3, 4, 5].map((star) => (
+            <button
+              key={star}
+              className="transition-all duration-200 transform hover:scale-110"
+              onMouseEnter={() => setHoveredRating(star)}
+              onMouseLeave={() => setHoveredRating(0)}
+              onClick={() => handleStarClick(star)}
+            >
+              <FaStar
+                className={`text-lg ${
+                  star <= (hoveredRating || selectedRating)
+                    ? "text-[#D2691E]"
+                    : "text-gray-300"
+                } hover:text-[#D2691E] transition-colors duration-200 cursor-pointer`}
+              />
+            </button>
+          ))}
+          {selectedRating > 0 && (
+            <span className="text-sm text-[#8B4513] ml-2 font-medium">
+              ({selectedRating}/5)
+            </span>
+          )}
+        </div>
+      </SignedIn>
+
+      {/* ✅ Signed-out users see disabled stars */}
+      <SignedOut>
+        <div className="flex items-center gap-1 opacity-60 cursor-not-allowed">
+          {[1, 2, 3, 4, 5].map((star) => (
+            <FaStar key={star} className="text-lg text-gray-300" />
+          ))}
+          <span className="text-xs text-[#8B4513]/70 ml-2">
+            Sign in to rate
+          </span>
+        </div>
+      </SignedOut>
+    </>
   );
 };
 

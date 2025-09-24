@@ -1,5 +1,5 @@
 "use client";
-import { SignedIn, SignedOut, SignInButton, UserProfile } from "@clerk/nextjs";
+import { SignedIn, SignedOut, SignInButton, UserProfile, SignOutButton } from "@clerk/nextjs";
 import Navbar from "@/app/components/Navbar";
 import { motion } from "framer-motion";
 
@@ -12,7 +12,6 @@ const ProfileIllustration = () => (
     viewBox="0 0 200 200"
     className="w-32 h-32 mb-6"
   >
-    {/* Animated Stars */}
     {[...Array(8)].map((_, i) => {
       const angle = i * 45 * (Math.PI / 180);
       const radius = 120;
@@ -102,7 +101,7 @@ export default function AccountPage() {
   return (
     <div className="min-h-screen flex flex-col relative overflow-hidden">
       {/* Enhanced Gradient Background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[#F9F6F1] via-[#FDF8F3] to-[#F5F0E8]" />
+      <div className="absolute inset-0 bg-gradient-to-br from-[#F9F6F1] via-[#FDF8F3] to-[#F5F0E8] mt-20 z-0" />
 
       {/* Navbar - Fixed positioning */}
       <div className="relative z-50">
@@ -112,17 +111,17 @@ export default function AccountPage() {
       </div>
 
       {/* Main content */}
-      <main className="flex flex-1 items-center justify-center px-4 py-8 relative z-10">
+      <main className="flex flex-1 items-center justify-center px-4 py-8 relative z-10 mt-12 md:mt-24">
         <SignedIn>
           <div className="w-full max-w-7xl">
             <WelcomeMessage />
-            {/* <FeatureCards /> */}
 
+            {/* Profile & Sign Out Section */}
             <motion.div
               initial={{ opacity: 0, y: 60, scale: 0.9 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               transition={{ duration: 1, ease: "easeOut", delay: 1.5 }}
-              className="flex justify-center"
+              className="flex flex-col items-center justify-center space-y-6"
             >
               <div className="w-full max-w-5xl bg-white/95 backdrop-blur-xl shadow-2xl rounded-3xl border border-[#E5D3B3]/50 overflow-hidden relative">
                 {/* Top gradient border */}
@@ -141,7 +140,7 @@ export default function AccountPage() {
                   initial={{ scale: 0.98, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{ duration: 0.8, delay: 2.2 }}
-                  className="relative"
+                  className="relative p-8 md:p-12"
                 >
                   <UserProfile
                     routing="hash"
@@ -150,7 +149,7 @@ export default function AccountPage() {
                         rootBox: "w-full",
                         card: "w-full bg-transparent shadow-none rounded-none border-none",
                         navbar: "hidden",
-                        scrollBox: "p-8 md:p-12",
+                        scrollBox: "p-0",
                         profileSectionPrimaryButton:
                           "bg-[#2C1810] hover:bg-[#D2691E] transition-all duration-300 shadow-lg hover:shadow-xl",
                         formButtonPrimary:
@@ -172,6 +171,22 @@ export default function AccountPage() {
                       },
                     }}
                   />
+
+                  {/* Sign Out Button */}
+                  <div className="mt-6 flex justify-center">
+                    <SignOutButton>
+                      <motion.button
+                        whileHover={{
+                          scale: 1.05,
+                          boxShadow: "0 15px 30px -10px rgba(44, 24, 16, 0.3)",
+                        }}
+                        whileTap={{ scale: 0.97 }}
+                        className="px-8 py-3 bg-gradient-to-r from-[#D2691E] via-[#F4A460] to-[#DEB887] text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer"
+                      >
+                        Sign Out
+                      </motion.button>
+                    </SignOutButton>
+                  </div>
                 </motion.div>
               </div>
             </motion.div>
@@ -186,7 +201,7 @@ export default function AccountPage() {
             className="relative"
           >
             {/* Main Sign In Card */}
-            <div className="bg-white/98 backdrop-blur-xl shadow-2xl rounded-3xl p-12 text-center border border-[#E5D3B3]/50 relative overflow-hidden max-w-lg mx-auto">
+            <div className="bg-white/98 backdrop-blur-xl shadow-2xl rounded-3xl p-12 text-center border border-[#E5D3B3]/50 relative overflow-hidden max-w-lg mx-auto mt-12 md:mt-24">
               {/* Animated gradient border */}
               <motion.div
                 className="absolute inset-0 bg-gradient-to-r from-[#2C1810] via-[#D2691E] to-[#F4A460] rounded-3xl p-[3px]"
@@ -205,12 +220,9 @@ export default function AccountPage() {
 
               {/* Content */}
               <div className="relative z-10">
-                {/* Profile Illustration */}
                 <div className="flex justify-center">
                   <ProfileIllustration />
                 </div>
-
-                {/* Welcome Text */}
                 <motion.div
                   initial={{ y: 30, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
@@ -222,12 +234,9 @@ export default function AccountPage() {
                     </span>
                   </h2>
                   <p className="text-[#2C1810]/80 mb-10 text-lg leading-relaxed max-w-md mx-auto">
-                    Sign in to access your personalized dashboard and manage
-                    your profile with our beautiful interface
+                    Sign in to access your personalized dashboard and manage your profile with our beautiful interface
                   </p>
                 </motion.div>
-
-                {/* Security Badge */}
                 <motion.div
                   initial={{ y: 30, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
@@ -236,16 +245,11 @@ export default function AccountPage() {
                 >
                   <SecurityShield />
                   <div className="text-left">
-                    <div className="text-sm font-semibold text-[#2C1810]">
-                      256-bit Encryption
-                    </div>
-                    <div className="text-xs text-[#2C1810]/60">
-                      Bank-level security
-                    </div>
+                    <div className="text-sm font-semibold text-[#2C1810]">256-bit Encryption</div>
+                    <div className="text-xs text-[#2C1810]/60">Bank-level security</div>
                   </div>
                 </motion.div>
 
-                {/* Sign In Button */}
                 <SignInButton mode="modal" forceRedirectUrl="/account">
                   <motion.button
                     whileHover={{
@@ -256,7 +260,7 @@ export default function AccountPage() {
                     className="w-full px-10 py-5 bg-gradient-to-r from-[#2C1810] via-[#D2691E] to-[#F4A460] text-white rounded-2xl font-bold text-lg shadow-xl hover:shadow-2xl transition-all duration-500 transform relative overflow-hidden group"
                   >
                     <motion.span className="absolute inset-0 bg-gradient-to-r from-[#D2691E] via-[#F4A460] to-[#DEB887] opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                    <span className="relative z-10 flex items-center justify-center space-x-3">
+                    <span className="relative z-10 flex items-center justify-center space-x-3 cursor-pointer">
                       <span>Sign In to Continue</span>
                       <motion.svg
                         className="w-6 h-6"
@@ -270,76 +274,13 @@ export default function AccountPage() {
                           ease: "easeInOut",
                         }}
                       >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M13 7l5 5m0 0l-5 5m5-5H6"
-                        />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                       </motion.svg>
                     </span>
                   </motion.button>
                 </SignInButton>
-
-                {/* Additional Info */}
-                <motion.p
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 1.5 }}
-                  className="text-sm text-[#2C1810]/60 mt-8"
-                >
-                  By signing in, you agree to our{" "}
-                  <span className="text-[#D2691E] hover:underline cursor-pointer">
-                    Terms of Service
-                  </span>{" "}
-                  and{" "}
-                  <span className="text-[#D2691E] hover:underline cursor-pointer">
-                    Privacy Policy
-                  </span>
-                </motion.p>
               </div>
             </div>
-
-            {/* Floating Decorative Elements */}
-            <motion.div
-              animate={{
-                rotate: 360,
-                scale: [1, 1.2, 1],
-              }}
-              transition={{
-                rotate: { duration: 20, repeat: Infinity, ease: "linear" },
-                scale: { duration: 4, repeat: Infinity, ease: "easeInOut" },
-              }}
-              className="absolute -top-6 -right-6 w-12 h-12 bg-gradient-to-br from-[#D2691E] to-[#F4A460] rounded-full opacity-80 blur-sm"
-            />
-            <motion.div
-              animate={{
-                rotate: -360,
-                scale: [1, 1.4, 1],
-                x: [0, 10, 0],
-                y: [0, -10, 0],
-              }}
-              transition={{
-                rotate: { duration: 30, repeat: Infinity, ease: "linear" },
-                scale: { duration: 5, repeat: Infinity, ease: "easeInOut" },
-                x: { duration: 3, repeat: Infinity, ease: "easeInOut" },
-                y: { duration: 2.5, repeat: Infinity, ease: "easeInOut" },
-              }}
-              className="absolute -bottom-8 -left-8 w-8 h-8 bg-gradient-to-br from-[#2C1810] to-[#D2691E] rounded-full opacity-60 blur-sm"
-            />
-            <motion.div
-              animate={{
-                scale: [1, 1.1, 1],
-                opacity: [0.4, 0.8, 0.4],
-                rotate: [0, 180, 360],
-              }}
-              transition={{
-                duration: 6,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }}
-              className="absolute top-1/4 -left-4 w-6 h-6 bg-gradient-to-br from-[#F4A460] to-[#DEB887] rounded-full blur-sm"
-            />
           </motion.div>
         </SignedOut>
       </main>
