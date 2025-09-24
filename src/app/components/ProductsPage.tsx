@@ -370,7 +370,7 @@ export default function ProductsPage() {
   };
 
   return (
-    <main className="relative min-h-screen bg-gradient-to-br from-[#F5F1EA] via-[#E9DCCF] to-[#DDD0BF] pt-20">
+    <main className="relative min-h-screen bg-gradient-to-br from-[#F5F1EA] via-[#E9DCCF] to-[#DDD0BF] pt-20 overflow-x-hidden">
       <FloatingElements />
 
       {/* Hero Section */}
@@ -399,7 +399,7 @@ export default function ProductsPage() {
       </div>
 
       {/* Filters + Products */}
-      <div className="relative left-20">
+      <div className="relative max-w-7xl mx-auto px-4">
         <ProductFilter
           filters={filters}
           onFiltersChange={handleFiltersChange}
