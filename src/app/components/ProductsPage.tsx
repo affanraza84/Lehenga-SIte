@@ -8,6 +8,7 @@ import products from "../data/productsDetails";
 import Link from "next/link";
 import { useWishlist } from "@/app/context/WishlistContext";
 import ProductFilter from "./ProductFilter";
+import { SignedIn, SignedOut } from "@clerk/nextjs"; // ✅ Added Clerk imports
 
 // Product and Filter types
 interface Product {
@@ -217,35 +218,57 @@ const ProductRow = ({
 
             {/* Action Buttons */}
             <div className="mt-6 space-y-3">
-              <button
-                onClick={() =>
-                  addToCart({
-                    id: product.id,
-                    title: product.title,
-                    price: product.price,
-                    image: product.images[0],
-                  })
-                }
-                className="w-full py-3 bg-gradient-to-r from-[#8B4513] to-[#D2691E] text-white font-semibold rounded-xl hover:from-[#D2691E] hover:to-[#8B4513] transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl cursor-pointer"
-              >
-                Add to Cart - ₹{product.price.toLocaleString("en-IN")}
-              </button>
+              {/* If signed in → real button, else disabled */}
+              <SignedIn>
+                <button
+                  onClick={() =>
+                    addToCart({
+                      id: product.id,
+                      title: product.title,
+                      price: product.price,
+                      image: product.images[0],
+                    })
+                  }
+                  className="w-full py-3 bg-gradient-to-r from-[#8B4513] to-[#D2691E] text-white font-semibold rounded-xl hover:from-[#D2691E] hover:to-[#8B4513] transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl cursor-pointer"
+                >
+                  Add to Cart - ₹{product.price.toLocaleString("en-IN")}
+                </button>
+              </SignedIn>
+              <SignedOut>
+                <button
+                  disabled
+                  className="w-full py-3 bg-gray-400 text-white font-semibold rounded-xl cursor-not-allowed"
+                >
+                  Sign in to Add to Cart
+                </button>
+              </SignedOut>
 
-              <button
-                onClick={() =>
-                  inWishlist
-                    ? removeFromWishlist(product.id)
-                    : addToWishlist({
-                        id: product.id,
-                        title: product.title,
-                        image: product.images[0],
-                      })
-                }
-                className="w-full py-3 bg-gradient-to-r from-[#8B4513] to-[#D2691E] text-white font-semibold rounded-xl hover:from-[#D2691E] hover:to-[#8B4513] transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl cursor-pointer flex items-center justify-center gap-2"
-              >
-                <FaHeart className="text-white" />
-                {inWishlist ? "Remove from Wishlist" : "Add to Wishlist"}
-              </button>
+              <SignedIn>
+                <button
+                  onClick={() =>
+                    inWishlist
+                      ? removeFromWishlist(product.id)
+                      : addToWishlist({
+                          id: product.id,
+                          title: product.title,
+                          image: product.images[0],
+                        })
+                  }
+                  className="w-full py-3 bg-gradient-to-r from-[#8B4513] to-[#D2691E] text-white font-semibold rounded-xl hover:from-[#D2691E] hover:to-[#8B4513] transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl cursor-pointer flex items-center justify-center gap-2"
+                >
+                  <FaHeart className="text-white" />
+                  {inWishlist ? "Remove from Wishlist" : "Add to Wishlist"}
+                </button>
+              </SignedIn>
+              <SignedOut>
+                <button
+                  disabled
+                  className="w-full py-3 bg-gray-400 text-white font-semibold rounded-xl cursor-not-allowed flex items-center justify-center gap-2"
+                >
+                  <FaHeart className="text-white" />
+                  Sign in to use Wishlist
+                </button>
+              </SignedOut>
             </div>
           </div>
 
