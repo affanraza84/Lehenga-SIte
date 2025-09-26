@@ -39,10 +39,21 @@ const Navbar = () => {
   const { wishlistCount } = useWishlist();
 
   const searchRef = useRef<HTMLDivElement>(null);
-  const typingState = useRef({ currentTextIndex: 0, currentCharIndex: 0, isDeleting: false });
+  const typingState = useRef({
+    currentTextIndex: 0,
+    currentCharIndex: 0,
+    isDeleting: false,
+  });
 
   const searchTexts = useMemo(
-    () => ["Sherwani", "Bridal Lehenga", "Kurta", "Saree", "Short Kurta", "Lehenga"],
+    () => [
+      "Sherwani",
+      "Bridal Lehenga",
+      "Kurta",
+      "Saree",
+      "Short Kurta",
+      "Lehenga",
+    ],
     []
   );
 
@@ -57,19 +68,24 @@ const Navbar = () => {
   // Typewriter effect for placeholder
   useEffect(() => {
     const typewriter = () => {
-      const { currentTextIndex, currentCharIndex, isDeleting } = typingState.current;
+      const { currentTextIndex, isDeleting } = typingState.current;
       const currentFullText = searchTexts[currentTextIndex];
 
       if (isDeleting) {
         typingState.current.currentCharIndex--;
-        setSearchText(currentFullText.substring(0, typingState.current.currentCharIndex));
+        setSearchText(
+          currentFullText.substring(0, typingState.current.currentCharIndex)
+        );
         if (typingState.current.currentCharIndex === 0) {
           typingState.current.isDeleting = false;
-          typingState.current.currentTextIndex = (currentTextIndex + 1) % searchTexts.length;
+          typingState.current.currentTextIndex =
+            (currentTextIndex + 1) % searchTexts.length;
         }
       } else {
         typingState.current.currentCharIndex++;
-        setSearchText(currentFullText.substring(0, typingState.current.currentCharIndex));
+        setSearchText(
+          currentFullText.substring(0, typingState.current.currentCharIndex)
+        );
         if (typingState.current.currentCharIndex === currentFullText.length) {
           setTimeout(() => {
             typingState.current.isDeleting = true;
@@ -111,7 +127,11 @@ const Navbar = () => {
       if (searchRef.current && !searchRef.current.contains(target)) {
         setFilteredProducts([]);
       }
-      if (isMobileMenuOpen && !target.closest(".mobile-menu") && !target.closest(".hamburger-btn")) {
+      if (
+        isMobileMenuOpen &&
+        !target.closest(".mobile-menu") &&
+        !target.closest(".hamburger-btn")
+      ) {
         setIsMobileMenuOpen(false);
       }
     },
@@ -170,7 +190,11 @@ const Navbar = () => {
               className="hamburger-btn lg:hidden text-[#2C1810] hover:text-[#D2691E] transition-colors duration-200 p-1 cursor-pointer"
               aria-label="Toggle menu"
             >
-              {isMobileMenuOpen ? <FiX className="text-xl" /> : <FiMenu className="text-xl" />}
+              {isMobileMenuOpen ? (
+                <FiX className="text-xl" />
+              ) : (
+                <FiMenu className="text-xl" />
+              )}
             </button>
 
             {/* Logo */}
@@ -217,13 +241,19 @@ const Navbar = () => {
 
               {/* Icons */}
               <div className="relative group">
-                <Link href="/account" className="text-[#2C1810] hover:text-[#D2691E]">
+                <Link
+                  href="/account"
+                  className="text-[#2C1810] hover:text-[#D2691E]"
+                >
                   <FiUser className="text-lg" />
                 </Link>
               </div>
 
               <div className="relative group">
-                <Link href="/wishlist" className="text-[#2C1810] hover:text-[#D2691E]">
+                <Link
+                  href="/wishlist"
+                  className="text-[#2C1810] hover:text-[#D2691E]"
+                >
                   <FiHeart className="text-lg" />
                   {wishlistCount > 0 && (
                     <span className="absolute -top-2 -right-2 bg-[#D2691E] text-white text-xs font-bold rounded-full px-1.5 py-0.5">
@@ -234,7 +264,10 @@ const Navbar = () => {
               </div>
 
               <div className="relative group">
-                <Link href="/store" className="relative text-[#2C1810] hover:text-[#D2691E]">
+                <Link
+                  href="/store"
+                  className="relative text-[#2C1810] hover:text-[#D2691E]"
+                >
                   <FiShoppingBag className="text-lg" />
                   {cartCount > 0 && (
                     <span className="absolute -top-2 -right-2 bg-[#D2691E] text-white text-xs font-bold rounded-full px-1.5 py-0.5">
@@ -437,7 +470,7 @@ const Navbar = () => {
                   className="flex items-center px-4 py-4 text-sm font-medium text-[#2C1810] hover:text-[#D2691E] hover:bg-white/40 rounded-lg transition-all duration-200"
                   onClick={closeMobileMenu}
                 >
-                  <FiUser className="text-lg mr-3" /> 
+                  <FiUser className="text-lg mr-3" />
                   <span>My Account</span>
                 </Link>
                 <Link
@@ -446,7 +479,7 @@ const Navbar = () => {
                   onClick={closeMobileMenu}
                 >
                   <div className="flex items-center">
-                    <FiHeart className="text-lg mr-3" /> 
+                    <FiHeart className="text-lg mr-3" />
                     <span>My Wishlist</span>
                   </div>
                   {wishlistCount > 0 && (
@@ -461,7 +494,7 @@ const Navbar = () => {
                   onClick={closeMobileMenu}
                 >
                   <div className="flex items-center">
-                    <FiShoppingBag className="text-lg mr-3" /> 
+                    <FiShoppingBag className="text-lg mr-3" />
                     <span>My Cart</span>
                   </div>
                   {cartCount > 0 && (

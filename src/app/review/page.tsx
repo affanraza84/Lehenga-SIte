@@ -1,7 +1,15 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { FaStar, FaTrash, FaArrowLeft, FaHeart, FaEye, FaCalendar, FaShoppingBag, FaFilter } from "react-icons/fa";
+import {
+  FaStar,
+  FaTrash,
+  FaHeart,
+  FaEye,
+  FaCalendar,
+  FaShoppingBag,
+  FaFilter,
+} from "react-icons/fa";
 import Image from "next/image";
 import Link from "next/link";
 import Navbar from "../components/Navbar";
@@ -47,20 +55,18 @@ const StarDisplay = ({ rating }: { rating: number }) => {
           }`}
         />
       ))}
-      <span className="text-lg text-[#8B4513] ml-3 font-bold">
-        {rating}/5
-      </span>
+      <span className="text-lg text-[#8B4513] ml-3 font-bold">{rating}/5</span>
     </div>
   );
 };
 
-const ReviewCard = ({ 
-  review, 
-  onDelete, 
-  index 
-}: { 
-  review: Review; 
-  onDelete: (productId: number) => void; 
+const ReviewCard = ({
+  review,
+  onDelete,
+  index,
+}: {
+  review: Review;
+  onDelete: (productId: number) => void;
   index: number;
 }) => {
   const [isLoaded, setIsLoaded] = useState(false);
@@ -72,28 +78,34 @@ const ReviewCard = ({
   }, [index]);
 
   const formatDate = (timestamp: number) => {
-    return new Date(timestamp).toLocaleDateString('en-IN', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
+    return new Date(timestamp).toLocaleDateString("en-IN", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
     });
   };
 
   const formatTime = (timestamp: number) => {
-    return new Date(timestamp).toLocaleTimeString('en-IN', {
-      hour: '2-digit',
-      minute: '2-digit'
+    return new Date(timestamp).toLocaleTimeString("en-IN", {
+      hour: "2-digit",
+      minute: "2-digit",
     });
   };
 
   const getRatingText = (rating: number) => {
     switch (rating) {
-      case 5: return "Absolutely Love It!";
-      case 4: return "Really Good";
-      case 3: return "It's Okay";
-      case 2: return "Not Great";
-      case 1: return "Disappointed";
-      default: return "";
+      case 5:
+        return "Absolutely Love It!";
+      case 4:
+        return "Really Good";
+      case 3:
+        return "It's Okay";
+      case 2:
+        return "Not Great";
+      case 1:
+        return "Disappointed";
+      default:
+        return "";
     }
   };
 
@@ -113,7 +125,9 @@ const ReviewCard = ({
   return (
     <div
       className={`transform transition-all duration-1000 ${
-        isLoaded && !isDeleting ? "translate-y-0 opacity-100 scale-100" : "translate-y-8 opacity-0 scale-95"
+        isLoaded && !isDeleting
+          ? "translate-y-0 opacity-100 scale-100"
+          : "translate-y-8 opacity-0 scale-95"
       }`}
     >
       <div className="group bg-white/95 backdrop-blur-sm rounded-3xl shadow-lg hover:shadow-2xl border border-[#E9DCCF]/50 overflow-hidden transition-all duration-500 hover:border-[#D2691E]/30">
@@ -130,7 +144,10 @@ const ReviewCard = ({
                 </h3>
                 <div className="flex items-center gap-2 text-sm text-[#8B4513]/70">
                   <FaCalendar className="text-xs" />
-                  <span>{formatDate(review.timestamp)} at {formatTime(review.timestamp)}</span>
+                  <span>
+                    {formatDate(review.timestamp)} at{" "}
+                    {formatTime(review.timestamp)}
+                  </span>
                 </div>
               </div>
             </div>
@@ -175,12 +192,18 @@ const ReviewCard = ({
               {/* Rating Section */}
               <div className="bg-gradient-to-br from-white to-[#F5F1EA]/30 rounded-2xl p-6 border-2 border-[#E9DCCF]/30">
                 <div className="text-center mb-4">
-                  <h5 className="text-lg font-semibold text-[#2C1810] mb-3">Your Rating</h5>
+                  <h5 className="text-lg font-semibold text-[#2C1810] mb-3">
+                    Your Rating
+                  </h5>
                   <StarDisplay rating={review.rating} />
                 </div>
-                
+
                 <div className="text-center">
-                  <span className={`text-2xl font-bold ${getRatingColor(review.rating)}`}>
+                  <span
+                    className={`text-2xl font-bold ${getRatingColor(
+                      review.rating
+                    )}`}
+                  >
                     {getRatingText(review.rating)}
                   </span>
                 </div>
@@ -188,20 +211,32 @@ const ReviewCard = ({
                 {/* Rating Breakdown */}
                 <div className="mt-6 grid grid-cols-3 gap-4">
                   <div className="text-center p-3 bg-[#E9DCCF]/30 rounded-xl">
-                    <div className="text-2xl font-bold text-[#D2691E] mb-1">{review.rating}</div>
-                    <div className="text-xs text-[#8B4513] font-medium">Stars Given</div>
+                    <div className="text-2xl font-bold text-[#D2691E] mb-1">
+                      {review.rating}
+                    </div>
+                    <div className="text-xs text-[#8B4513] font-medium">
+                      Stars Given
+                    </div>
                   </div>
                   <div className="text-center p-3 bg-[#E9DCCF]/30 rounded-xl">
                     <div className="text-2xl font-bold text-[#D2691E] mb-1">
-                      {review.rating >= 4 ? '😍' : review.rating >= 3 ? '😊' : '😐'}
+                      {review.rating >= 4
+                        ? "😍"
+                        : review.rating >= 3
+                        ? "😊"
+                        : "😐"}
                     </div>
-                    <div className="text-xs text-[#8B4513] font-medium">Your Mood</div>
+                    <div className="text-xs text-[#8B4513] font-medium">
+                      Your Mood
+                    </div>
                   </div>
                   <div className="text-center p-3 bg-[#E9DCCF]/30 rounded-xl">
                     <div className="text-2xl font-bold text-[#D2691E] mb-1">
                       {Math.round((review.rating / 5) * 100)}%
                     </div>
-                    <div className="text-xs text-[#8B4513] font-medium">Satisfaction</div>
+                    <div className="text-xs text-[#8B4513] font-medium">
+                      Satisfaction
+                    </div>
                   </div>
                 </div>
               </div>
@@ -214,7 +249,8 @@ const ReviewCard = ({
                   </div>
                   <div>
                     <p className="text-[#8B4513] font-medium text-sm">
-                      Thank you for your honest feedback! Your review helps other customers and improves our service quality.
+                      Thank you for your honest feedback! Your review helps
+                      other customers and improves our service quality.
                     </p>
                   </div>
                 </div>
@@ -230,50 +266,58 @@ const ReviewCard = ({
 export default function ReviewsPage() {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
-  const [sortBy, setSortBy] = useState<'newest' | 'oldest' | 'rating-high' | 'rating-low'>('newest');
+  const [sortBy, setSortBy] = useState<
+    "newest" | "oldest" | "rating-high" | "rating-low"
+  >("newest");
 
   useEffect(() => {
-    const storedReviews = JSON.parse(localStorage.getItem('reviews') || '[]');
+    const storedReviews = JSON.parse(localStorage.getItem("reviews") || "[]");
     setReviews(storedReviews);
     setTimeout(() => setIsLoaded(true), 300);
   }, []);
 
   const handleDeleteReview = (productId: number) => {
-    const updatedReviews = reviews.filter(review => review.productId !== productId);
+    const updatedReviews = reviews.filter(
+      (review) => review.productId !== productId
+    );
     setReviews(updatedReviews);
-    localStorage.setItem('reviews', JSON.stringify(updatedReviews));
+    localStorage.setItem("reviews", JSON.stringify(updatedReviews));
   };
 
   const handleClearAllReviews = () => {
     setReviews([]);
-    localStorage.removeItem('reviews');
+    localStorage.removeItem("reviews");
   };
 
   const sortedReviews = [...reviews].sort((a, b) => {
     switch (sortBy) {
-      case 'newest':
+      case "newest":
         return b.timestamp - a.timestamp;
-      case 'oldest':
+      case "oldest":
         return a.timestamp - b.timestamp;
-      case 'rating-high':
+      case "rating-high":
         return b.rating - a.rating;
-      case 'rating-low':
+      case "rating-low":
         return a.rating - b.rating;
       default:
         return b.timestamp - a.timestamp;
     }
   });
 
-  const averageRating = reviews.length > 0 
-    ? (reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length).toFixed(1)
-    : 0;
+  const averageRating =
+    reviews.length > 0
+      ? (
+          reviews.reduce((sum, review) => sum + review.rating, 0) /
+          reviews.length
+        ).toFixed(1)
+      : 0;
 
   const ratingDistribution = {
-    5: reviews.filter(r => r.rating === 5).length,
-    4: reviews.filter(r => r.rating === 4).length,
-    3: reviews.filter(r => r.rating === 3).length,
-    2: reviews.filter(r => r.rating === 2).length,
-    1: reviews.filter(r => r.rating === 1).length,
+    5: reviews.filter((r) => r.rating === 5).length,
+    4: reviews.filter((r) => r.rating === 4).length,
+    3: reviews.filter((r) => r.rating === 3).length,
+    2: reviews.filter((r) => r.rating === 2).length,
+    1: reviews.filter((r) => r.rating === 1).length,
   };
 
   if (!isLoaded) {
@@ -281,7 +325,9 @@ export default function ReviewsPage() {
       <div className="min-h-screen bg-gradient-to-br from-[#F5F1EA] via-[#E9DCCF] to-[#DDD0BF] flex items-center justify-center pt-24">
         <div className="text-center">
           <div className="animate-spin rounded-full h-20 w-20 border-4 border-[#D2691E]/30 border-t-[#D2691E] mx-auto mb-4"></div>
-          <p className="text-[#8B4513] text-lg font-medium">Loading your reviews...</p>
+          <p className="text-[#8B4513] text-lg font-medium">
+            Loading your reviews...
+          </p>
         </div>
       </div>
     );
@@ -297,12 +343,13 @@ export default function ReviewsPage() {
         <div className="max-w-6xl mx-auto">
           {/* Header */}
           <div className="text-center mb-12">
-            <div className="flex items-center justify-center gap-6 mb-8 mt-8 cursor-pointer">
-            </div>
+            <div className="flex items-center justify-center gap-6 mb-8 mt-8 cursor-pointer"></div>
 
             <h1 className="text-5xl md:text-7xl font-bold text-[#2C1810] mb-4 tracking-wide">
               Your
-              <span className="block text-[#D2691E] italic font-serif">Reviews</span>
+              <span className="block text-[#D2691E] italic font-serif">
+                Reviews
+              </span>
             </h1>
             <p className="text-xl text-[#8B4513] font-light max-w-2xl mx-auto">
               Your valuable feedback on our traditional collection
@@ -319,58 +366,97 @@ export default function ReviewsPage() {
                     <div className="p-4 bg-gradient-to-br from-[#D2691E]/10 to-[#8B4513]/10 rounded-2xl mb-3 group-hover:scale-105 transition-transform duration-300">
                       <FaStar className="text-3xl text-[#D2691E] mx-auto" />
                     </div>
-                    <div className="text-3xl font-bold text-[#D2691E] mb-1">{reviews.length}</div>
-                    <div className="text-sm text-[#8B4513] font-medium">Total Reviews</div>
+                    <div className="text-3xl font-bold text-[#D2691E] mb-1">
+                      {reviews.length}
+                    </div>
+                    <div className="text-sm text-[#8B4513] font-medium">
+                      Total Reviews
+                    </div>
                   </div>
 
                   <div className="text-center group cursor-pointer">
                     <div className="p-4 bg-gradient-to-br from-[#D2691E]/10 to-[#8B4513]/10 rounded-2xl mb-3 group-hover:scale-105 transition-transform duration-300">
-                      <div className="text-3xl text-[#D2691E] mx-auto font-bold">{averageRating}</div>
+                      <div className="text-3xl text-[#D2691E] mx-auto font-bold">
+                        {averageRating}
+                      </div>
                     </div>
-                    <div className="text-3xl font-bold text-[#D2691E] mb-1">★</div>
-                    <div className="text-sm text-[#8B4513] font-medium">Average Rating</div>
+                    <div className="text-3xl font-bold text-[#D2691E] mb-1">
+                      ★
+                    </div>
+                    <div className="text-sm text-[#8B4513] font-medium">
+                      Average Rating
+                    </div>
                   </div>
 
                   <div className="text-center group cursor-pointer">
                     <div className="p-4 bg-gradient-to-br from-[#D2691E]/10 to-[#8B4513]/10 rounded-2xl mb-3 group-hover:scale-105 transition-transform duration-300">
                       <FaHeart className="text-3xl text-[#D2691E] mx-auto" />
                     </div>
-                    <div className="text-3xl font-bold text-[#D2691E] mb-1">{ratingDistribution[5]}</div>
-                    <div className="text-sm text-[#8B4513] font-medium">5-Star Reviews</div>
+                    <div className="text-3xl font-bold text-[#D2691E] mb-1">
+                      {ratingDistribution[5]}
+                    </div>
+                    <div className="text-sm text-[#8B4513] font-medium">
+                      5-Star Reviews
+                    </div>
                   </div>
 
                   <div className="text-center group cursor-pointer">
                     <div className="p-4 bg-gradient-to-br from-[#D2691E]/10 to-[#8B4513]/10 rounded-2xl mb-3 group-hover:scale-105 transition-transform duration-300">
                       <div className="text-3xl text-[#D2691E] mx-auto">
-                        {reviews.length > 0 ? Math.round((ratingDistribution[5] / reviews.length) * 100) : 0}%
+                        {reviews.length > 0
+                          ? Math.round(
+                              (ratingDistribution[5] / reviews.length) * 100
+                            )
+                          : 0}
+                        %
                       </div>
                     </div>
-                    <div className="text-3xl font-bold text-[#D2691E] mb-1">😍</div>
-                    <div className="text-sm text-[#8B4513] font-medium">Satisfaction Rate</div>
+                    <div className="text-3xl font-bold text-[#D2691E] mb-1">
+                      😍
+                    </div>
+                    <div className="text-sm text-[#8B4513] font-medium">
+                      Satisfaction Rate
+                    </div>
                   </div>
                 </div>
               </div>
 
               {/* Rating Distribution */}
               <div className="px-8 pb-8">
-                <h3 className="text-xl font-bold text-[#2C1810] mb-6 text-center">Rating Distribution</h3>
+                <h3 className="text-xl font-bold text-[#2C1810] mb-6 text-center">
+                  Rating Distribution
+                </h3>
                 <div className="space-y-3">
                   {[5, 4, 3, 2, 1].map((rating) => (
                     <div key={rating} className="flex items-center gap-4">
                       <div className="flex items-center gap-2 w-20">
-                        <span className="text-sm font-bold text-[#8B4513]">{rating}</span>
+                        <span className="text-sm font-bold text-[#8B4513]">
+                          {rating}
+                        </span>
                         <FaStar className="text-[#D2691E] text-sm" />
                       </div>
                       <div className="flex-1 bg-[#E9DCCF]/50 rounded-full h-4 overflow-hidden">
                         <div
                           className="h-full bg-gradient-to-r from-[#8B4513] to-[#D2691E] transition-all duration-1000 ease-out rounded-full"
                           style={{
-                            width: `${reviews.length > 0 ? (ratingDistribution[rating as keyof typeof ratingDistribution] / reviews.length) * 100 : 0}%`
+                            width: `${
+                              reviews.length > 0
+                                ? (ratingDistribution[
+                                    rating as keyof typeof ratingDistribution
+                                  ] /
+                                    reviews.length) *
+                                  100
+                                : 0
+                            }%`,
                           }}
                         />
                       </div>
                       <span className="text-sm font-bold text-[#8B4513] w-8 text-right">
-                        {ratingDistribution[rating as keyof typeof ratingDistribution]}
+                        {
+                          ratingDistribution[
+                            rating as keyof typeof ratingDistribution
+                          ]
+                        }
                       </span>
                     </div>
                   ))}
@@ -390,9 +476,12 @@ export default function ReviewsPage() {
               <div className="p-6 bg-gradient-to-br from-[#D2691E]/10 to-[#8B4513]/10 rounded-full w-24 h-24 mx-auto mb-6">
                 <FaStar className="text-5xl text-[#D2691E] mx-auto mt-2" />
               </div>
-              <h2 className="text-3xl font-bold text-[#2C1810] mb-4">No Reviews Yet</h2>
+              <h2 className="text-3xl font-bold text-[#2C1810] mb-4">
+                No Reviews Yet
+              </h2>
               <p className="text-lg text-[#8B4513] mb-8 max-w-md mx-auto leading-relaxed">
-                Start rating products to see your thoughtful reviews here. Your feedback is valuable to us and other customers!
+                Start rating products to see your thoughtful reviews here. Your
+                feedback is valuable to us and other customers!
               </p>
               <Link
                 href="/products"
@@ -411,7 +500,9 @@ export default function ReviewsPage() {
                 <div className="flex items-center gap-4">
                   <div className="flex items-center gap-2">
                     <FaFilter className="text-[#D2691E]" />
-                    <label className="text-sm font-bold text-[#8B4513]">Sort by:</label>
+                    <label className="text-sm font-bold text-[#8B4513]">
+                      Sort by:
+                    </label>
                   </div>
                   <select
                     value={sortBy}
@@ -452,9 +543,12 @@ export default function ReviewsPage() {
               <div className="p-4 bg-gradient-to-br from-[#D2691E]/10 to-[#8B4513]/10 rounded-full w-16 h-16 mx-auto mb-6">
                 <FaEye className="text-2xl text-[#D2691E] mx-auto mt-2" />
               </div>
-              <h3 className="text-2xl font-bold text-[#2C1810] mb-4">Want to Review More Products?</h3>
+              <h3 className="text-2xl font-bold text-[#2C1810] mb-4">
+                Want to Review More Products?
+              </h3>
               <p className="text-lg text-[#8B4513] mb-8 max-w-md mx-auto">
-                Explore our beautiful collection and share your thoughts with other customers.
+                Explore our beautiful collection and share your thoughts with
+                other customers.
               </p>
               <Link
                 href="/products"
