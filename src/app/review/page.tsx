@@ -298,13 +298,6 @@ export default function ReviewsPage() {
           {/* Header */}
           <div className="text-center mb-12">
             <div className="flex items-center justify-center gap-6 mb-8 mt-8 cursor-pointer">
-              <Link
-                href="/products"
-                className="group flex items-center gap-3 px-6 py-3 bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 border border-[#E9DCCF]"
-              >
-                <FaArrowLeft className="text-[#D2691E] text-lg group-hover:-translate-x-1 transition-transform duration-300" />
-                <span className="text-[#8B4513] font-medium">Back to Products</span>
-              </Link>
             </div>
 
             <h1 className="text-5xl md:text-7xl font-bold text-[#2C1810] mb-4 tracking-wide">
