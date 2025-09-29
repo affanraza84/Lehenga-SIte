@@ -13,7 +13,6 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
 
 interface Review {
   productId: number;
@@ -561,8 +560,6 @@ export default function ReviewsPage() {
           </>
         )}
       </div>
-
-      <Footer />
     </main>
   );
 }

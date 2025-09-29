@@ -16,7 +16,7 @@ const mainLinks = [
 ];
 
 const extraLinks = [
-  { name: "WEDDING CLOSET", href: "#" },
+  { name: "WEDDING CLOSET", href: "/" },
   { name: "FEEDBACKS", href: "/review" },
   { name: "PRODUCTS", href: "/products" },
 ];

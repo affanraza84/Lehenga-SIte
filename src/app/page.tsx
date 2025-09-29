@@ -2,7 +2,6 @@ import React from 'react';
 import Navbar from './components/Navbar';
 import HeroSection from './components/HeroSection';
 import ProductsPage from './components/ProductsPage';
-import Footer from './components/Footer';
 
 const page = () => {
   return (
@@ -10,7 +9,6 @@ const page = () => {
       <Navbar/>
       <HeroSection/>
       <ProductsPage/>
-      <Footer/>
     </main>
   )
 }

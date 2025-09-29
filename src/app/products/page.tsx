@@ -10,7 +10,6 @@ import { useWishlist } from "@/app/context/WishlistContext";
 import { SignedIn, SignedOut } from "@clerk/nextjs";
 import products from "@/app/data/products";
 import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
 import ProductFilter from "../components/ProductFilter";
 
 interface Product {
@@ -546,8 +545,6 @@ function ProductsPageInner() {
           overflow: hidden;
         }
       `}</style>
-
-      <Footer />
     </main>
   );
 }
